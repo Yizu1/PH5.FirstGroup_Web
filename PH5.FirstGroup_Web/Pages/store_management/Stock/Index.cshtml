@@ -1,0 +1,152 @@
+﻿@page
+@model PH5.FirstGroup_Web.Pages.DefaultModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <link href="~/layui/css/layui.css" rel="stylesheet" />
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body>
+    <div class="demoTable">
+        <div class="layui-inline">
+            <input class="layui-input" name="name" id="demoReload" autocomplete="off" placeholder="请输入仓库名称">
+        </div>
+        <div class="layui-inline">
+            <input class="layui-input" name="name" id="demoReload" autocomplete="off" placeholder="请输入单号">
+        </div>
+        <button class="layui-btn" data-type="reload" id="cha">搜索</button>
+    </div>
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+
+    
+
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script>
+
+
+
+
+
+    <script src="~/layui/layui.js"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述 JS 路径需要改成你本地的 -->
+
+    <script>
+        layui.use('table', function () {
+            var table = layui.table;
+
+            var hod = table.render({
+                elem: '#test'
+                , url: 'http://localhost:15850/api/StockShow'
+                , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                , defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                    title: '提示'
+                    , layEvent: 'LAYTABLE_TIPS'
+                    , icon: 'layui-icon-tips'
+                }]
+                , title: '用户数据表'
+                , cols: [[
+                    { field: 'kGpic', title: '商品图片' }
+                    , { field: 'kGname', title: '商品名称' }
+                    , { field: 'kGodd', title: '商品编号' }
+                    , { field: 'mId', title: '仓库名称' }
+                    , { field: 'sMid', title: '入库数量' }
+                    , { field: 'wMid', title: '出库数量' }
+                    , { field: 'knum', title: '现有库存' }
+                    , { fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150 }
+                ]]
+                , page: true
+            });
+
+            //头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'getCheckData':
+                        var data = checkStatus.data;
+                        layer.alert(JSON.stringify(data));
+                        break;
+                    case 'getCheckLength':
+                        var data = checkStatus.data;
+                        layer.msg('选中了：' + data.length + ' 个');
+                        break;
+                    case 'isAll':
+                        layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                        break;
+
+                    //自定义头工具栏右侧图标 - 提示
+                    case 'LAYTABLE_TIPS':
+                        layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(test)', function (obj) {
+                var data = obj.data;
+                //console.log(obj)
+                if (obj.event === 'del') {
+                    if (confirm("确认删除吗？")) {
+                        $.ajax({
+                            url: 'http://localhost:15850/api/StockDel?ids=' + data.kid,
+                            type: 'post',
+                            success: function (d) {
+                                if (d > 0) {
+                                    alert("删除成功");
+                                    location.href = "/store_management/Stock/Index";
+                                }
+                            }
+                        })
+                    }
+
+                } else if (obj.event === 'edit') {
+                    layer.prompt({
+                        formType: 2
+                        , value: data.email
+                    }, function (value, index) {
+                        obj.update({
+                            email: value
+                        });
+                        layer.close(index);
+                    });
+                }
+            });
+            //查询
+            $("#cha").on('click', function () {
+                //执行重载
+                hod.reload({
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        name: $("#demoReload").val()
+                    }
+                })
+            });
+            $("#cha").on('click', function () {
+                //执行重载
+                hod.reload({
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    , where: {
+                        dan: $("#demoReload").val()
+                    }
+                })
+            });
+        });
+    </script>
+
+</body>
+</html>

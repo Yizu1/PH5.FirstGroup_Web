@@ -1,9 +1,9 @@
-﻿@page
+﻿
+@page
 @model PH5.FirstGroup_Web.Pages.DefaultModel
 @{
     Layout = null;
 }
-
 
 <script src="~/js/layui/layui.js"></script>
 <link href="~/js/layui/css/layui.css" rel="stylesheet" />
@@ -67,7 +67,7 @@
 </html>
 
 <script>
-     
+
     layui.config({
         base: '/layui老师发的/extends/'
     })
@@ -105,7 +105,7 @@
 
             var id = elem.attr('lay-key');
             $.ajax({
-                url:  "http://10.3.41.10:8020/api/Men_Show2",
+                url: "http://10.3.41.10:8020/api/Men_Show2",
                 type: "post",
                 data: { 'uid': localStorage.getItem("uid"), 'pid': id },
                 success: function (d) {
@@ -118,7 +118,7 @@
         //dropdown.on('click(top)', function (options) {
         //    var othis = $(this); //当前菜单列表的 DOM 对象
         //    console.log(options); //菜单列表的 lay-options 中的参数
-        //}); 
+        //});
 
     });
 
@@ -136,10 +136,10 @@
     //        var id = elem.attr('lay-key');
     //        alert(id);
     //        getMenu(id);
-    //    });  
+    //    });
     //})
 
-     
+
 </script>
 
 
